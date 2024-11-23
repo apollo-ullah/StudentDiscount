@@ -213,3 +213,4 @@ const foodStyles = StyleSheet.create({
     right: 10,
   },
 });
+
