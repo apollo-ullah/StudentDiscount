@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TextInput, TouchableOpacity } from 'react-native';
-import { MaterialIcons, Ionicons, FontAwesome } from '@expo/vector-icons'; // Icons from expo vector icons
+import { MaterialIcons, Ionicons } from '@expo/vector-icons'; // Icons from expo vector icons
 
 // SearchBar Component
 const SearchBar = () => {
@@ -23,8 +23,7 @@ const SearchBar = () => {
 };
 
 // TabBar Component
-const TabBar = () => {
-  const [activeTab, setActiveTab] = useState('Explore');
+const TabBar = ({ activeTab, setActiveTab, favorites }) => {
   const tabs = ['Explore', 'Favorites', 'Food', 'Other'];
 
   return (
@@ -46,9 +45,7 @@ const TabBar = () => {
 };
 
 // FoodCard Component
-const FoodCard = ({ name, discount }) => {
-  const [isFavorite, setIsFavorite] = useState(false);
-
+const FoodCard = ({ name, discount, toggleFavorite, isFavorite }) => {
   return (
     <TouchableOpacity onPress={() => console.log(`Selected: ${name}`)} style={foodStyles.card}>
       <Image
@@ -58,7 +55,7 @@ const FoodCard = ({ name, discount }) => {
       <View style={foodStyles.infoContainer}>
         <Text style={foodStyles.foodName}>{name}</Text>
         <Text style={foodStyles.discount}>{discount}</Text>
-        <TouchableOpacity onPress={() => setIsFavorite(!isFavorite)} style={foodStyles.favoriteIcon}>
+        <TouchableOpacity onPress={() => toggleFavorite(name)} style={foodStyles.favoriteIcon}>
           <Text>{isFavorite ? '❤️' : '♡'}</Text>
         </TouchableOpacity>
       </View>
@@ -68,8 +65,21 @@ const FoodCard = ({ name, discount }) => {
 
 // Main App Component
 export default function App() {
+  const [activeTab, setActiveTab] = useState('Explore');
+  const [favorites, setFavorites] = useState([]);
+
+  // Toggle favorite function
+  const toggleFavorite = (name) => {
+    if (favorites.includes(name)) {
+      setFavorites(favorites.filter((item) => item !== name));
+    } else {
+      setFavorites([...favorites, name]);
+    }
+  };
+
   return (
-    <ScrollView style={styles.container}>
+    <View style={{ flex: 1 }}>
+      {/* Settings and Notifications Icons */}
       <View style={styles.headerIcons}>
         <TouchableOpacity style={styles.notificationIcon}>
           <Ionicons name="notifications-outline" size={24} color="black" />
@@ -78,16 +88,58 @@ export default function App() {
           <Ionicons name="settings-outline" size={24} color="black" />
         </TouchableOpacity>
       </View>
-      <Text style={styles.title}>DishCount!</Text>
-      <Text style={styles.subtitle}>Discounts that taste as good as they sound.</Text>
+
+      {/* Search Bar (Sticky) */}
       <SearchBar />
-      <TabBar />
-      <Text style={styles.sectionTitle}>Near You</Text>
-      <FoodCard name="Ganadara" discount="15% Discount" />
-      <Text style={styles.sectionTitle}>Recommended</Text>
-      <FoodCard name="Poulet Rouge" discount="15% Discount" />
-      <FoodCard name="Poulet Rouge" discount="15% Discount" />
-    </ScrollView>
+
+      {/* Tab Bar */}
+      <TabBar activeTab={activeTab} setActiveTab={setActiveTab} favorites={favorites} />
+
+      {/* Scrollable Content */}
+      <ScrollView style={styles.scrollContainer}>
+        {activeTab === 'Explore' && (
+          <>
+            <Text style={styles.sectionTitle}>Near You</Text>
+            <FoodCard
+              name="Ganadara"
+              discount="15% Discount"
+              toggleFavorite={toggleFavorite}
+              isFavorite={favorites.includes('Ganadara')}
+            />
+            <Text style={styles.sectionTitle}>Recommended</Text>
+            <FoodCard
+              name="Poulet Rouge"
+              discount="15% Discount"
+              toggleFavorite={toggleFavorite}
+              isFavorite={favorites.includes('Poulet Rouge')}
+            />
+            <FoodCard
+              name="Poulet Rouge"
+              discount="15% Discount"
+              toggleFavorite={toggleFavorite}
+              isFavorite={favorites.includes('Poulet Rouge')}
+            />
+          </>
+        )}
+        {activeTab === 'Favorites' && (
+          <>
+            {favorites.length > 0 ? (
+              favorites.map((item) => (
+                <FoodCard
+                  key={item}
+                  name={item}
+                  discount="15% Discount"
+                  toggleFavorite={toggleFavorite}
+                  isFavorite={favorites.includes(item)}
+                />
+              ))
+            ) : (
+              <Text style={styles.noFavoritesText}>No favorites added yet.</Text>
+            )}
+          </>
+        )}
+      </ScrollView>
+    </View>
   );
 }
 
@@ -98,29 +150,31 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
     padding: 10,
   },
+  scrollContainer: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+    paddingHorizontal: 10,
+  },
   headerIcons: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
+    marginTop: 15, // 15px top margin as requested
     marginBottom: 10,
   },
   notificationIcon: {
     marginRight: 15,
   },
   settingsIcon: {},
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#555',
-    marginBottom: 20,
-  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginVertical: 10,
+  },
+  noFavoritesText: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#6c7072',
+    marginTop: 20,
   },
 });
 
@@ -213,4 +267,3 @@ const foodStyles = StyleSheet.create({
     right: 10,
   },
 });
-
