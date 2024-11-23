@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TextInput, TouchableOpacity } from 'react-native';
+import { MaterialIcons, Ionicons, FontAwesome } from '@expo/vector-icons'; // Icons from expo vector icons
 
 // SearchBar Component
 const SearchBar = () => {
   return (
     <View style={searchStyles.container}>
-      <Image
-        source={{ uri: 'https://placeholder.pics/svg/16x16' }}
-        style={searchStyles.icon}
-      />
+      <TouchableOpacity>
+        <MaterialIcons name="map" size={24} color="#6c7072" />
+      </TouchableOpacity>
       <TextInput
         style={searchStyles.input}
         placeholder="Search"
         placeholderTextColor="#6c7072"
+      />
+      <Image
+        source={{ uri: 'https://placeholder.pics/svg/16x16' }}
+        style={searchStyles.icon}
       />
     </View>
   );
@@ -41,25 +45,12 @@ const TabBar = () => {
   );
 };
 
-// PromoBanner Component
-const PromoBanner = () => {
-  return (
-    <View style={promoStyles.container}>
-      <Image
-        source={{ uri: 'https://placeholder.pics/svg/380x160' }}
-        style={promoStyles.image}
-      />
-      <View style={promoStyles.overlay}>
-        <Text style={promoStyles.text}>Promotional Text Here</Text>
-      </View>
-    </View>
-  );
-};
-
 // FoodCard Component
 const FoodCard = ({ name, discount }) => {
+  const [isFavorite, setIsFavorite] = useState(false);
+
   return (
-    <View style={foodStyles.card}>
+    <TouchableOpacity onPress={() => console.log(`Selected: ${name}`)} style={foodStyles.card}>
       <Image
         source={{ uri: 'https://placeholder.pics/svg/380x161' }}
         style={foodStyles.image}
@@ -67,11 +58,11 @@ const FoodCard = ({ name, discount }) => {
       <View style={foodStyles.infoContainer}>
         <Text style={foodStyles.foodName}>{name}</Text>
         <Text style={foodStyles.discount}>{discount}</Text>
-        <TouchableOpacity style={foodStyles.favoriteIcon}>
-          <Text>❤️</Text>
+        <TouchableOpacity onPress={() => setIsFavorite(!isFavorite)} style={foodStyles.favoriteIcon}>
+          <Text>{isFavorite ? '❤️' : '♡'}</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -79,11 +70,18 @@ const FoodCard = ({ name, discount }) => {
 export default function App() {
   return (
     <ScrollView style={styles.container}>
+      <View style={styles.headerIcons}>
+        <TouchableOpacity style={styles.notificationIcon}>
+          <Ionicons name="notifications-outline" size={24} color="black" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.settingsIcon}>
+          <Ionicons name="settings-outline" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
       <Text style={styles.title}>DishCount!</Text>
       <Text style={styles.subtitle}>Discounts that taste as good as they sound.</Text>
       <SearchBar />
       <TabBar />
-      <PromoBanner />
       <Text style={styles.sectionTitle}>Near You</Text>
       <FoodCard name="Ganadara" discount="15% Discount" />
       <Text style={styles.sectionTitle}>Recommended</Text>
@@ -100,6 +98,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
     padding: 10,
   },
+  headerIcons: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginBottom: 10,
+  },
+  notificationIcon: {
+    marginRight: 15,
+  },
+  settingsIcon: {},
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -130,12 +137,13 @@ const searchStyles = StyleSheet.create({
   icon: {
     width: 16,
     height: 16,
-    marginRight: 12,
+    marginLeft: 12,
   },
   input: {
     flex: 1,
     fontSize: 16,
     color: '#6c7072',
+    marginLeft: 10,
   },
 });
 
@@ -164,37 +172,6 @@ const tabStyles = StyleSheet.create({
     backgroundColor: '#ff0000',
     position: 'absolute',
     bottom: 0,
-  },
-});
-
-const promoStyles = StyleSheet.create({
-  container: {
-    position: 'relative',
-    width: '100%',
-    height: 160,
-    borderRadius: 10,
-    overflow: 'hidden',
-    marginBottom: 20,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
   },
 });
 
