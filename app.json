@@ -13,7 +13,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "This app uses your location to provide notifications about nearby discounts.",
+        "NSUserTrackingUsageDescription": "This app uses notifications to inform you of nearby places."
+      }
     },
     "android": {
       "adaptiveIcon": {
