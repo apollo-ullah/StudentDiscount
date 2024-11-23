@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TextInput, TouchableOpacity } from 'react-native';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons'; // Icons from expo vector icons
 
+// this is a test comment please work
+
 // SearchBar Component
 const SearchBar = () => {
   return (
